@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import './App.css';
-import SummarizationPage from './pages/SummarizationPage'; // Ensure this path is correct
+import SummarizationPage from './pages/SummarizationPage';
+import MatchmakingPage from './pages/MatchmakingPage'; // Import MatchmakingPage
+import Chatbot from './components/Chatbot/Chatbot';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [popupType, setPopupType] = useState(""); // 'login' or 'signup'
 
-  // Effect to update the class for dark mode after state change
   useEffect(() => {
     document.body.classList.toggle('dark-mode', darkMode);
   }, [darkMode]);
@@ -36,14 +37,12 @@ function App() {
             <li><Link to="/">Home</Link></li>
             <li><Link to="#about">About</Link></li>
             <li><Link to="#contact">Contact</Link></li>
-            {/* Login & Sign Up Links styled like navigation links */}
             <li>
               <Link to="#" onClick={() => openPopup('login')}>Login</Link>
             </li>
             <li>
               <Link to="#" onClick={() => openPopup('signup')}>Sign Up</Link>
             </li>
-            {/* Toggle Dark Mode Button */}
             <li>
               <button 
                 onClick={toggleDarkMode} 
@@ -87,6 +86,13 @@ function App() {
                   </Link>
                 </div>
                 <div className="feature-card">
+                  <h3>Research Matchmaking</h3>
+                  <p>Find collaborators based on shared research interests and skills.</p>
+                  <Link to="/matchmaking">
+                    <button className="learn-more-btn">Learn More</button>
+                  </Link>
+                </div>
+                <div className="feature-card">
                   <h3>Data Science Insights</h3>
                   <p>Discover the latest data science insights for a better understanding of your research.</p>
                   <button className="learn-more-btn">Learn More</button>
@@ -97,6 +103,9 @@ function App() {
           
           {/* Summarization Page Route */}
           <Route path="/summarization" element={<SummarizationPage />} />
+
+          {/* Matchmaking Page Route */}
+          <Route path="/matchmaking" element={<MatchmakingPage />} />
         </Routes>
 
         {/* Footer */}
@@ -124,6 +133,9 @@ function App() {
             </div>
           </div>
         )}
+
+        {/* Chatbot Component */}
+        <Chatbot />
       </div>
     </Router>
   );
