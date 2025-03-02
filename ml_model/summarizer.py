@@ -3,15 +3,18 @@ import json
 import torch
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
-# Load model and tokenizer
-model_name = "facebook/bart-large-cnn"
+# Load model and tokenizer once to prevent reloading
+MODEL_NAME = "facebook/bart-large-cnn"
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+TORCH_DTYPE = torch.float16 if torch.cuda.is_available() else torch.float32
 
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
-
-model = AutoModelForSeq2SeqLM.from_pretrained(model_name, torch_dtype=torch_dtype).to(device)
-model.eval()
+try:
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+    model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME, torch_dtype=TORCH_DTYPE).to(DEVICE)
+    model.eval()
+except Exception as e:
+    print(json.dumps({"error": f"Model loading failed: {str(e)}"}))
+    sys.exit(1)
 
 def chunk_text(text, max_length=512):
     """Splits long text into smaller chunks for better summarization."""
@@ -19,23 +22,31 @@ def chunk_text(text, max_length=512):
     return [tokenizer.decode(tokens[i : i + max_length]) for i in range(0, len(tokens), max_length)]
 
 def summarize(text):
-    print("Processing text...")  
+    """Summarizes input text using the BART model."""
+    if not text.strip():
+        return {"error": "No text provided for summarization."}
 
-    chunks = chunk_text(text)  # Handle long inputs
+    print("Processing text...")  
     summaries = []
 
-    with torch.no_grad():
-        for chunk in chunks:
-            inputs = tokenizer(chunk, return_tensors="pt", truncation=True, padding="longest", max_length=512).to(device)
-            summary_ids = model.generate(
-                inputs["input_ids"], 
-                max_length=100, 
-                min_length=30, 
-                num_beams=4
-            )
-            summaries.append(tokenizer.decode(summary_ids[0], skip_special_tokens=True))
+    try:
+        chunks = chunk_text(text)
+
+        with torch.no_grad():
+            for chunk in chunks:
+                inputs = tokenizer(chunk, return_tensors="pt", truncation=True, padding="longest", max_length=512).to(DEVICE)
+                summary_ids = model.generate(
+                    inputs["input_ids"], 
+                    max_length=100, 
+                    min_length=30, 
+                    num_beams=4
+                )
+                summaries.append(tokenizer.decode(summary_ids[0], skip_special_tokens=True))
+        
+        return {"summary": " ".join(summaries)}
     
-    return " ".join(summaries)  # Merge chunks if needed
+    except Exception as e:
+        return {"error": str(e)}
 
 if __name__ == "__main__":
     input_text = sys.stdin.read().strip()
@@ -44,8 +55,6 @@ if __name__ == "__main__":
         print(json.dumps({"error": "No input received"}))
     else:
         try:
-            print(f"Input Text: {input_text}")  # Debugging step
-            summary = summarize(input_text)
-            print(json.dumps({"summary": summary}, ensure_ascii=False))
+            print(json.dumps(summarize(input_text), ensure_ascii=False))
         except Exception as e:
-            print(json.dumps({"error": str(e)}))  # ✅ Removed extra ')'
+            print(json.dumps({"error": str(e)}))

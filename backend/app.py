@@ -1,41 +1,45 @@
 from flask import Flask, request, jsonify
-import subprocess
-import json
+from flask_cors import CORS  # Import CORS
+
+import sys
+import os
+
+# Ensure the correct ml_model folder is added to sys.path
+ml_model_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'ml_model'))
+if ml_model_path not in sys.path:
+    sys.path.append(ml_model_path)
+
+try:
+    from summarizer import summarize  # Import summarizer function
+except ImportError:
+    print("Error: Could not import summarizer.py. Ensure it's in the ml_model folder.")
+    summarize = None
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})  # Enable CORS for all routes
 
-# Function to call model.py externally
-def summarize_text(text):
-    try:
-        result = subprocess.run(
-            ["python", "model.py"],
-            input=text.encode(),
-            capture_output=True,
-            text=True,
-            timeout=30  # Prevent long executions
-        )
-        return json.loads(result.stdout)["summary"]
-    except Exception as e:
-        return str(e)
+@app.route("/", methods=["GET"])
+def home():
+    return "Flask server is running. Use /summarize endpoint to summarize text."
 
 @app.route("/summarize", methods=["POST"])
-def summarize():
+def summarize_text():
+    if summarize is None:
+        return jsonify({"error": "Summarization module not found."}), 500
+
     data = request.get_json()
-    text = data.get("text", "").strip()
+    text = data.get("text", "")
 
     if not text:
-        return jsonify({"error": "No text provided"}), 400
+        return jsonify({"error": "No text provided for summarization."}), 400
 
-    try:
-        # Limit input size to prevent crashes
-        if len(text) > 5000:  # Adjust limit based on testing
-            return jsonify({"error": "Text too long. Please limit to 5000 characters."}), 400
-        
-        summary = summarize_text(text)
-        return jsonify({"summary": summary})
+    summary = summarize(text)  # Call the summarize function from summarizer.py
     
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    # Ensure the summary is returned as a string
+    if isinstance(summary, dict) and "summary" in summary:
+        summary = summary["summary"]
+    
+    return jsonify({"summary": str(summary)})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(debug=True)

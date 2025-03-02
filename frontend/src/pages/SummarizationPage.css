@@ -1,0 +1,130 @@
+/* SummarizationPage.css */
+.summarization-page {
+  padding: 40px;
+  max-width: 900px;
+  margin: auto;
+  text-align: center;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.summarization-page h2 {
+  font-size: 2.4rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+.summarization-page textarea {
+  width: 90%;
+  height: 250px;
+  padding: 16px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  resize: none;
+  transition: all 0.3s ease;
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f6f7;
+  box-sizing: border-box;
+}
+
+.summarization-page textarea:focus {
+  border-color: #457b9d;
+  outline: none;
+  background-color: #ffffff;
+}
+
+.summarization-page button {
+  background-color: #457b9d;
+  color: white;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.summarization-page button:hover {
+  background-color: #1d3557;
+  transform: translateY(-4px);
+}
+
+.summarization-page button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.summary-result {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #ecf0f1;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  font-size: 1.1rem;
+  color: #34495e;
+}
+
+.summary-result h3 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 15px;
+}
+
+.summary-result p {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #7f8c8d;
+  word-wrap: break-word;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .summarization-page {
+    padding: 20px;
+    max-width: 95%;
+  }
+
+  .summarization-page h2 {
+    font-size: 2rem;
+  }
+
+  .summarization-page textarea {
+    width: 100%;
+  }
+
+  .summarization-page button {
+    padding: 12px 28px;
+    font-size: 1.1rem;
+  }
+
+  .summary-result {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .summarization-page h2 {
+    font-size: 1.8rem;
+  }
+
+  .summarization-page textarea {
+    height: 200px;
+  }
+
+  .summarization-page button {
+    padding: 10px 24px;
+    font-size: 1rem;
+  }
+
+  .summary-result h3 {
+    font-size: 1.6rem;
+  }
+}
