@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import './App.css';
 import SummarizationPage from './pages/SummarizationPage';
-import MatchmakingPage from './pages/MatchmakingPage'; // Import MatchmakingPage
+import MatchmakingPage from './pages/MatchmakingPage';
+import DatasetExploration from './pages/DatasetExploration'; // Import DatasetExploration
 import Chatbot from './components/Chatbot/Chatbot';
 
 function App() {
@@ -93,9 +94,11 @@ function App() {
                   </Link>
                 </div>
                 <div className="feature-card">
-                  <h3>Data Science Insights</h3>
-                  <p>Discover the latest data science insights for a better understanding of your research.</p>
-                  <button className="learn-more-btn">Learn More</button>
+                  <h3>Dataset Exploration</h3>
+                  <p>Upload a dataset to analyze missing values, trends, and visualize data.</p>
+                  <Link to="/dataset-exploration">
+                    <button className="learn-more-btn">Learn More</button>
+                  </Link>
                 </div>
               </section>
             </>
@@ -106,6 +109,9 @@ function App() {
 
           {/* Matchmaking Page Route */}
           <Route path="/matchmaking" element={<MatchmakingPage />} />
+
+          {/* Dataset Exploration Page Route */}
+          <Route path="/dataset-exploration" element={<DatasetExploration />} />
         </Routes>
 
         {/* Footer */}

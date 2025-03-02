@@ -6,10 +6,12 @@
     "axios": "^1.8.1",
     "bootstrap": "^5.3.3",
     "framer-motion": "^12.4.7",
+    "papaparse": "^5.5.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^7.2.0",
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^5.0.1",
+    "recharts": "^2.15.1"
   },
   "scripts": {
     "start": "set NODE_OPTIONS=--openssl-legacy-provider && react-scripts start",
